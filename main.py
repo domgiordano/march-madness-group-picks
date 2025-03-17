@@ -25,7 +25,7 @@ def get_user_names():
         window = sg.Window('Enter Name', layout, element_justification='center')
         event, values = window.read()
 
-        user_names.append(values[f'user_{i}'])
+        user_names.append(values[f'user_{i}'].upper())
         window.close()
 
     return user_names
@@ -85,7 +85,7 @@ def round_matchups(matchups, user_names, round_name):
                 winner = team2
             else:
                 # Tie: Randomly decide winner
-                winner = handle_tie(team1, team2, round_name, region)
+                winner = handle_tie(user_names, team1, team2, round_name, region)
 
             match_results[reg].append(winner)
         sg.popup(f"{reg} {round_name} Results", '\n'.join(match_results[reg]), font='Helvetica 12', background_color='#000000', button_color=('white', '#4CAF50'))
@@ -93,14 +93,15 @@ def round_matchups(matchups, user_names, round_name):
     # Return winners
     return match_results
 
-def handle_tie(team1, team2, round_name, region):
+def handle_tie(user_names, team1, team2, round_name, region):
     options = ["GRANT", "LUKE", "MR. FOLK", "HUNTER BURY",
                "MEAT SHIELD", "REEZE","MONEY MITCH", "MIKE",
                "SMUT", "LELAND", "REDHEAD", "SOMI", "TROJAN"
             ]
     selection = random.choice(options)
-    sg.popup(f"Tie! Pls call {selection} to decide.", font='Helvetica 12', background_color='#000000', button_color=('white', '#4CAF50'))
-    return get_user_vote(team1, team2, "TIEBREAKER", round_name, region)
+    user = random.choice(user_names)
+    sg.popup("TIEBREAKER", f"{user} Pls call {selection} to decide.", font='Helvetica 12', background_color='#000000', button_color=('white', '#4CAF50'))
+    return get_user_vote(team1, team2, selection, round_name, region)
 def process_bracket(user_names):
     matchups = load_matchups()
 
